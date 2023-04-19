@@ -50,6 +50,11 @@ const buildDefaultConversation = ({
       ...conversation,
       endpoint
     };
+  } else if (endpoint === 'StableLM') {
+    conversation = {
+      ...conversation,
+      endpoint
+    };
   } else if (endpoint === null) {
     conversation = {
       ...conversation,

@@ -39,6 +39,12 @@ const cleanupPreset = ({ preset: _preset, endpointsConfig = {} }) => {
       presetId: _preset?.presetId ?? null,
       title: _preset?.title ?? 'New Preset'
     };
+  } else if (endpoint === 'StableLM') {
+    preset = {
+      endpoint,
+      presetId: _preset?.presetId ?? null,
+      title: _preset?.title ?? 'New Preset'
+    };
   } else if (endpoint === null) {
     preset = {
       endpoint,

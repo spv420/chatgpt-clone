@@ -10,7 +10,8 @@ export default function createPayload(submission: TSubmission) {
     openAI: '/api/ask/openAI',
     bingAI: '/api/ask/bingAI',
     chatGPTBrowser: '/api/ask/chatGPTBrowser',
-    vicuna: '/api/ask/vicuna'
+    vicuna: '/api/ask/vicuna',
+    StableLM: '/api/ask/StableLM'
   };
 
   const server = endpointUrlMap[endpoint];

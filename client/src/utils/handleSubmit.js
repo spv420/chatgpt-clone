@@ -74,6 +74,13 @@ const useMessageHandler = () => {
         token: endpointsConfig[endpoint]?.userProvide ? getToken() : null
       };
       responseSender = 'Vicuna';
+    } else if (endpoint === 'StableLM') {
+      endpointOption = {
+        endpoint,
+        model: 'StableLM',
+        token: endpointsConfig[endpoint]?.userProvide ? getToken() : null
+      };
+      responseSender = 'StableLM';
     } else if (endpoint === null) {
       console.error('No endpoint available');
       return;
