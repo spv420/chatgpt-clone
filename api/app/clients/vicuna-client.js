@@ -77,6 +77,10 @@ async function predict_stream(input,progressCallback,max_tokens=1720,temperature
 
   final_prompt_lol = "PLACEHOLDER";
 
+  var end = "\n### Human:";
+
+  var tmp_buf = "";
+
   var params = {
       'max_new_tokens': max_tokens,
       'do_sample': do_sample,
@@ -128,7 +132,28 @@ async function predict_stream(input,progressCallback,max_tokens=1720,temperature
       case "process_generating":
         try {
           var s = msg.output.data[0].slice(length_current);
+          tmp_buf += s;
           length_current += s.length;
+
+          if (tmp_buf.startsWith(end)) {
+            fin_gen_lol = msg.output.data[0].slice(input.length);
+            final_prompt_lol = msg.output.data[0];
+            socket.close();
+            done_with_genning = true;
+            break;
+          }
+
+          if (end.startsWith(tmp_buf)) {
+            break;
+          } else {
+            if (tmp_buf.length > 0) {
+              progressCallback(tmp_buf);
+//              tmp_buf = "";
+//              break;
+            }
+            tmp_buf = "";
+          }
+
 //          console.log(s);
           if (msg.output.data[0].slice(input.length) == fin_gen_lol) {
 //            socket.close();
@@ -138,14 +163,14 @@ async function predict_stream(input,progressCallback,max_tokens=1720,temperature
           fin_gen_lol = msg.output.data[0].slice(input.length);
           final_prompt_lol = msg.output.data[0];
 //          console.log(fin_gen_lol)
-          if (fin_gen_lol.includes("\n### Human:")) {
+          if (fin_gen_lol.includes(end)) {
             socket.close();
             done_with_genning = true;
             break;
           }
-          if (s.length > 0) {
+/*          if (s.length > 0 && !started_end_str) {
             progressCallback(s);
-          }
+          }*/
         } catch (e) {
           // lol
         }
@@ -173,8 +198,8 @@ async function predict_stream(input,progressCallback,max_tokens=1720,temperature
 
   await lol_do_it();
 
-  if (fin_gen_lol.includes("\n### Human:")) {
-    fin_gen_lol = fin_gen_lol.slice(0, fin_gen_lol.lastIndexOf("\n### Human:"))
+  if (fin_gen_lol.includes(end)) {
+    fin_gen_lol = fin_gen_lol.slice(0, fin_gen_lol.lastIndexOf(end))
   }
 
   if (fin_gen_lol.length === 0) {
