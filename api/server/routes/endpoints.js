@@ -27,8 +27,9 @@ router.get('/', function (req, res) {
       availableModels: getChatGPTBrowserModels()
     }
     : false;
+  const vicuna = true;
 
-  res.send(JSON.stringify({ azureOpenAI, openAI, bingAI, chatGPTBrowser }));
+  res.send(JSON.stringify({ azureOpenAI, openAI, bingAI, chatGPTBrowser, vicuna }));
 });
 
 module.exports = { router, getOpenAIModels, getChatGPTBrowserModels };

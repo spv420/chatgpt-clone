@@ -33,6 +33,12 @@ const cleanupPreset = ({ preset: _preset, endpointsConfig = {} }) => {
         _preset?.model ?? endpointsConfig[endpoint]?.availableModels?.[0] ?? 'text-davinci-002-render-sha',
       title: _preset?.title ?? 'New Preset'
     };
+  } else if (endpoint === 'vicuna') {
+    preset = {
+      endpoint,
+      presetId: _preset?.presetId ?? null,
+      title: _preset?.title ?? 'New Preset'
+    };
   } else if (endpoint === null) {
     preset = {
       endpoint,

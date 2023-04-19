@@ -25,6 +25,9 @@ const useMessageHandler = () => {
 
     // determine the model to be used
     const { endpoint } = currentConversation;
+
+    console.log(endpoint);
+
     let endpointOption = {};
     let responseSender = '';
     if (endpoint === 'azureOpenAI' || endpoint === 'openAI') {
@@ -64,6 +67,13 @@ const useMessageHandler = () => {
         token: endpointsConfig[endpoint]?.userProvide ? getToken() : null
       };
       responseSender = 'ChatGPT';
+    } else if (endpoint === 'vicuna') {
+      endpointOption = {
+        endpoint,
+        model: 'vicuna',
+        token: endpointsConfig[endpoint]?.userProvide ? getToken() : null
+      };
+      responseSender = 'Vicuna';
     } else if (endpoint === null) {
       console.error('No endpoint available');
       return;

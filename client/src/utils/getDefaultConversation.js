@@ -45,6 +45,11 @@ const buildDefaultConversation = ({
         endpointsConfig[endpoint]?.availableModels?.[0] ??
         'text-davinci-002-render-sha'
     };
+  } else if (endpoint === 'vicuna') {
+    conversation = {
+      ...conversation,
+      endpoint
+    };
   } else if (endpoint === null) {
     conversation = {
       ...conversation,
