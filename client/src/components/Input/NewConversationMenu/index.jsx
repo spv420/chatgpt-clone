@@ -29,8 +29,6 @@ export default function NewConversationMenu() {
   const availableEndpoints = useRecoilValue(store.availableEndpoints);
   const [presets, setPresets] = useRecoilState(store.presets);
 
-  console.log(availableEndpoints);
-
   const conversation = useRecoilValue(store.conversation) || {};
   const { endpoint, conversationId } = conversation;
   const { newConversation } = store.useConversation();

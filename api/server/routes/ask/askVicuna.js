@@ -173,14 +173,14 @@ const ask = async ({
     });
     res.end();
 
-    if (userParentMessageId == '00000000-0000-0000-0000-000000000000') {
+//    if (userParentMessageId == '00000000-0000-0000-0000-000000000000') {
       // const title = await titleConvo({ endpoint: endpointOption?.endpoint, text, response: responseMessage });
       const title = await response.details.title;
       await saveConvo(req?.session?.user?.username, {
         conversationId: conversationId,
         title
       });
-    }
+//    }
   } catch (error) {
     const errorMessage = {
       messageId: responseMessageId,
