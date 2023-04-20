@@ -2,23 +2,24 @@ const WebSocket = require('ws');
 const { getMessages } = require('../../models/Message');
 
 function gen_input_text() {
-  return "\n<|USER|>";
+  return "<|USER|>";
 //  return "\n### Human: ";
   return "\nHuman (" + (new Date()).toLocaleString() + "): ";
 }
 
 function gen_assistant_input_text() {
-  return "\n<|ASSISTANT|>";
+  return "<|ASSISTANT|>";
 //  return "\n### Assistant:";
   return "\nAssistant (" + (new Date()).toLocaleString() + "):";
 }
 
 function gen_prompt() {
+  return '';
   return `<|SYSTEM|># StableLM Tuned (Alpha version)
 - StableLM is a helpful and harmless open-source AI language model developed by StabilityAI.
 - StableLM is excited to be able to help the user, but will refuse to do anything that could be considered harmful to the user.
 - StableLM is more than just an information source, StableLM is also able to write poetry, short stories, and make jokes.
-  - StableLM will refuse to participate in anything that could harm a human.
+- StableLM will refuse to participate in anything that could harm a human.
 `;
 //  return '';
   return `Assistant is a large language model called "Assistant", based on the LLaMA model trained by Meta.
@@ -85,7 +86,7 @@ async function predict_stream(input,progressCallback,max_tokens=1720,temperature
 
   final_prompt_lol = "PLACEHOLDER";
 
-  var end = "\n### Human:";
+  var end = "<|USER|>";
 
   var tmp_buf = "";
 
@@ -95,7 +96,7 @@ async function predict_stream(input,progressCallback,max_tokens=1720,temperature
       'temperature': temperature,
       'top_p': top_p,
       'typical_p': 1,
-      'repetition_penalty': 1.15,
+      'repetition_penalty': 1.2,
       'encoder_repetition_penalty': 1.0,
       'top_k': top_k,
       'min_length': 10,
@@ -185,6 +186,7 @@ async function predict_stream(input,progressCallback,max_tokens=1720,temperature
         break;
       case "process_completed":
         try {
+          console.log(msg.output.data[0]);
           fin_gen_lol = msg.output.data[0].slice(input.length);
           //          progressCallback("[DONE]");
         } catch (e) {
@@ -242,10 +244,10 @@ async function send_message_stream(txt, thread_id, progressCallback) {
     reset(thread_id)
   }
 
-  threads[thread_id] += input_text + txt + "\n" + assistant_input_text;
-  tmp = await predict_stream(threads[thread_id], progressCallback, max_tokens=1720, temperature=0.7, top_p=0.01, top_k=40);
+  threads[thread_id] += input_text + txt /*+ "\n" */+ assistant_input_text;
+  tmp = await predict_stream(threads[thread_id], progressCallback, max_tokens=1720, temperature=0.9, top_p=0.5, top_k=40);
 //  tmp = (tmp.slice(threads[thread_id].length));
-  threads[thread_id] += tmp + "\n";
+  threads[thread_id] += tmp/* + "\n"*/;
   return tmp;
 }
 
@@ -263,12 +265,12 @@ async function generate_history(conversationId) {
     if (msg.sender == "User") {
       ret += gen_input_text();
       ret += msg.text;
-      ret += "\n";
-    } else if (msg.sender == "Vicuna") {
+//      ret += "\n";
+    } else if (msg.sender == "StableLM") {
       ret += gen_assistant_input_text();
       ret += " ";
       ret += msg.text;
-      ret += "\n";
+//      ret += "\n";
     }
   }
 
@@ -310,6 +312,8 @@ const askStableLM = async ({
 
   var prompt = await generate_history(conversationId);
   threads[conversationId] = prompt;
+
+  console.log(prompt);
 
   var rlol = await send_message_stream(text, conversationId, onProgress);
 
